@@ -11,35 +11,20 @@ namespace CMPH_Financial.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string HouseholdId { get; set; }
+        public int? HouseholdId { get; set; }
         public string Role { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string DisplayName { get; set; }
-
-
-
+        public string ProfileImagePath { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
-        //public virtual ICollection<Ticket> Tickets { get; set; }
-        //public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
-        //public virtual ICollection<TicketComment> TicketComments { get; set; }
-        //public virtual ICollection<TicketHistory> TicketHistories { get; set; }
-        //public virtual ICollection<TicketNotification> TicketNotifications { get; set; }
+
 
 
         public ApplicationUser()
         {
             Transactions = new HashSet<Transaction>();
-            //Tickets = new HashSet<Ticket>();
-            //TicketAttachments = new HashSet<TicketAttachment>();
-            //TicketComments = new HashSet<TicketComment>();
-            //TicketHistories = new HashSet<TicketHistory>();
-            //TicketNotifications = new HashSet<TicketNotification>();
-
-
-
-
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -49,9 +34,9 @@ namespace CMPH_Financial.Models
 
             userIdentity.AddClaim(new Claim("FirstName", this.FirstName));
             userIdentity.AddClaim(new Claim("LastName", this.LastName));
-            //userIdentity.AddClaim(new Claim("DisplayName", this.DisplayName));
+            userIdentity.AddClaim(new Claim("DisplayName", this.DisplayName));
             userIdentity.AddClaim(new Claim("UserName", this.UserName));
-            //userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath));
+            userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath));
             userIdentity.AddClaim(new Claim("FullName", $"{this.FirstName}{this.LastName}"));
 
             // Add custom user claims here      
@@ -77,29 +62,15 @@ namespace CMPH_Financial.Models
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.BudgetItem> BudgetItems { get; set; }
 
+        public System.Data.Entity.DbSet<CMPH_Financial.Models.Category> Categories { get; set; }
+
+        public System.Data.Entity.DbSet<CMPH_Financial.Models.TransactionType> TransactionTypes { get; set; }
+
         public System.Data.Entity.DbSet<CMPH_Financial.Models.Household> Households { get; set; }
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.Transaction> Transactions { get; set; }
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.TransactionHistory> TransactionHistories { get; set; }
-
-        //    public DbSet<Ticket> Tickets { get; set; }
-
-        //    public DbSet<Project> Projects { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketPriority> TicketPriorities { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketStatus> TicketStatus { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketType> TicketTypes { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketAttachment> TicketAttachments { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketComment> TicketComments { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketHistory> TicketHistories { get; set; }
-
-        //    public DbSet<CMPH_BugTracker.Models.TicketNotification> TicketNotifications { get; set; }
-        //
+        public object HouseHolds { get; internal set; }
     }
 }

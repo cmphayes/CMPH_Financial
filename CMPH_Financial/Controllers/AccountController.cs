@@ -143,6 +143,14 @@ namespace CMPH_Financial.Controllers
         }
 
         //
+        // GET: /Account/Profile
+        [AllowAnonymous]
+        public ActionResult Profile()
+        {
+            return View();
+        }
+
+        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]

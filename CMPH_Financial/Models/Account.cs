@@ -8,10 +8,14 @@ namespace CMPH_Financial.Models
     public class Account
     {
         public int Id { get; set; }
-        public int HouseholdId { get; set; }
-        public int Balance { get; set; }
-        public int ReconciledBalance { get; set; }
+        public double CurrentBalance { get; set; }
+        public double InitialBalance { get; set; }
+        public double ReconciledBalance { get; set; }
         public string Name { get; set; }
+
+        public int HouseholdId { get; set; }
+
+        public virtual Household Household { get; set; }
 
 
         public virtual ICollection<Transaction> Transactions { get; set; }

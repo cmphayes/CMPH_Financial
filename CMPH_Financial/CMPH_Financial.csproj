@@ -203,9 +203,13 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TransactionHistoriesController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Controllers\TransactionTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HouseholdHelper.cs" />
+    <Compile Include="Helpers\UserHelper.cs" />
+    <Compile Include="Helpers\UserRoleHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -218,6 +222,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransactionHistory.cs" />
+    <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -230,23 +235,51 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="img\lightbox\close.png" />
+    <Content Include="img\lightbox\loading.gif" />
+    <Content Include="img\lightbox\next.png" />
+    <Content Include="img\lightbox\prev.png" />
+    <Content Include="img\sprites\sprite.png" />
+    <Content Include="Scripts\bootstrap.css" />
     <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.css" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\PublishProfiles\CMPHFinancial - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\custom.css" />
+    <Content Include="Scripts\font-awesome.css" />
+    <Content Include="Scripts\font-awesome.min.css" />
+    <Content Include="Scripts\front.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\lightbox.css" />
+    <Content Include="Scripts\lightbox.js" />
+    <Content Include="Scripts\lightbox.min.css" />
+    <Content Include="Scripts\lightbox.min.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\owl.carousel.css" />
+    <Content Include="Scripts\owl.carousel.min.js" />
+    <Content Include="Scripts\owl.theme.css" />
+    <Content Include="Scripts\pe-icon-7-stroke.css" />
+    <Content Include="Scripts\style.blue.css" />
+    <Content Include="Scripts\style.default.css" />
+    <Content Include="Scripts\style.green.css" />
+    <Content Include="Scripts\style.pink.css" />
+    <Content Include="Scripts\style.red.css" />
+    <Content Include="Scripts\style.sea.css" />
+    <Content Include="Scripts\style.violet.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -313,6 +346,13 @@
     <Content Include="Views\TransactionHistories\Details.cshtml" />
     <Content Include="Views\TransactionHistories\Edit.cshtml" />
     <Content Include="Views\TransactionHistories\Index.cshtml" />
+    <Content Include="Views\TransactionTypes\Create.cshtml" />
+    <Content Include="Views\TransactionTypes\Delete.cshtml" />
+    <Content Include="Views\TransactionTypes\Details.cshtml" />
+    <Content Include="Views\TransactionTypes\Edit.cshtml" />
+    <Content Include="Views\TransactionTypes\Index.cshtml" />
+    <Content Include="Views\Shared\_AccountsPartial.cshtml" />
+    <Content Include="Views\Account\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

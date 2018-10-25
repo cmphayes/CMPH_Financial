@@ -10,10 +10,7 @@ namespace CMPH_Financial.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
-        //public string HeadOfHousehold { get; set; }
-
-
-
+        public string HouseholdCreatorId { get; set; }
 
         public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }

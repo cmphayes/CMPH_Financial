@@ -9,7 +9,11 @@ namespace CMPH_Financial.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public double TargetBudget { get; set; }
+        public double CurrentBudget { get; set; }
         public int HouseholdId { get; set; }
+
+        public virtual Household Household { get; set; }
 
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
 
