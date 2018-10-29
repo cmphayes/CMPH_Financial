@@ -12,6 +12,8 @@ namespace CMPH_Financial.Models
         public double TargetBudget { get; set; }
         public double CurrentBudget { get; set; }
         public int HouseholdId { get; set; }
+        public bool Deleted { get; set; }
+
 
         public virtual Household Household { get; set; }
 

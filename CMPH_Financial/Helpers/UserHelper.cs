@@ -45,22 +45,21 @@ namespace CMPH_Financial.Helpers
                 return user;
             }
 
-            public static string GetUserHousehold(string userId)
+            public static Household GetUserHousehold(string userId)
             {
-                var defaultName = "None";
-                var household = db.Households.Find(userId).Name;
-                if (household == null)
-                {
-                    return defaultName;
-                }
-                if (string.IsNullOrEmpty(household))
-                {
-                    return defaultName;
-                }
-                return household;
+
+                var householdId = db.Users.Find(userId).HouseholdId;
+
+                return db.Households.Find(householdId);
             }
 
-            public static bool IsWebFriendlyImage(HttpPostedFileBase file)
+        //public static string GetUserHouseholdId(string userId)
+        //{
+        //    var householdId = db.Households.Find(userId).Id;
+        //    return householdId;
+        //}
+
+        public static bool IsWebFriendlyImage(HttpPostedFileBase file)
             {
                     if (file == null)
                         return false;

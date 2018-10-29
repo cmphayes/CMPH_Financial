@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using CMPH_Financial.Helpers;
@@ -24,10 +27,52 @@ namespace CMPH_Financial.Controllers
             return View(db.Households.ToList());
         }
 
+        // GET: Invite
+        public ActionResult Invite()
+        {
+            return View(db.Households.ToList());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Invite(InviteEmailModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var to = model.ToEmail;
+                    var from = "Financial<cmphayes@gmail.com>";
+                    var email = new MailMessage(from, to)
+                    {
+                        Subject = model.Subject,
+                        Body = $"<p> Email From: <bold>{model.FromName}</bold> ({model.FromEmail})</p><p> Subject:</p><p>{model.Subject}</p><p> Message:</p><p>{model.Body}</p><p>{model.Body}</p>",
+                        IsBodyHtml = true
+                    };
+
+
+                    var svc = new InviteEmail();
+                    await svc.SendAsync(email);
+
+                    return View(new EmailModel());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await Task.FromResult(0);
+                }
+            }
+            return View(model);
+        }
+
         // GET: Households/Details/5
+        [Authorize]
         public ActionResult Details()
         {
             var userId = User.Identity.GetUserId();
+            if (db.Users.Find(userId).HouseholdId == null)
+                return RedirectToAction("Index", "Home");
+
             return View(UserHelper.GetUserHousehold(userId));
         }
 
@@ -38,22 +83,19 @@ namespace CMPH_Financial.Controllers
         }
 
         // POST: Households/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id")] Household household, string Name)
+        public ActionResult Create([Bind(Include = "Id,Name,Password,ConfirmPassword")] Household household)
         {
             if (ModelState.IsValid)
             {
-                household.Name = Name;
+                db.Households.Add(household);
+                db.SaveChanges();
                 var headOfHouseHold = User.Identity.GetUserId();
-                HouseholdsHelper.AddUserToHousehold(headOfHouseHold, Id);
+                HouseholdsHelper.AddUserToHousehold(headOfHouseHold, household.Id);
                 UserRoleHelper.AddUserToRole(headOfHouseHold, "HeadOfHouseHold");
                 household.HouseholdCreatorId = headOfHouseHold;
                 household.Created = DateTimeOffset.Now;
-                db.Households.Add(household);
-                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -61,6 +103,7 @@ namespace CMPH_Financial.Controllers
         }
 
         // GET: Households/Edit/5
+        [Authorize(Roles = "Admin,HeadOfHousehold")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -76,8 +119,6 @@ namespace CMPH_Financial.Controllers
         }
 
         // POST: Households/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Created")] Household household)

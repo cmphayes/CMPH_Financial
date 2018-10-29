@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CMPH_Financial.Models;
+using static CMPH_Financial.InviteEmail;
 
 namespace CMPH_Financial.Controllers
 {

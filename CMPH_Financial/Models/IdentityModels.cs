@@ -36,7 +36,7 @@ namespace CMPH_Financial.Models
             userIdentity.AddClaim(new Claim("LastName", this.LastName));
             userIdentity.AddClaim(new Claim("DisplayName", this.DisplayName));
             userIdentity.AddClaim(new Claim("UserName", this.UserName));
-            userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath));
+            userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath ?? ""));
             userIdentity.AddClaim(new Claim("FullName", $"{this.FirstName}{this.LastName}"));
 
             // Add custom user claims here      

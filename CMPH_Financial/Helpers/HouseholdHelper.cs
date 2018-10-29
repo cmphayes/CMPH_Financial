@@ -24,15 +24,15 @@ namespace CMPH_Financial.Helpers
                 return (flag);
             }
 
-            public static bool IsUserOnAHousehold(string userId)
-            {
-                //var Household = db.Households.Find(userId);
-                var newUser = db.Users.Find(userId);
-                var flag = db.Households.Find().Users.Contains(newUser); 
-                return (flag);
-            }
+        public static bool IsUserOnAHousehold(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return false;
+            var houseId = db.Users.Find(userId).HouseholdId;
+            return (houseId != null);
+        }
 
-            public void AddUserToHousehold(string userId, int HouseholdId)
+        public static void AddUserToHousehold(string userId, int HouseholdId)
             {
                 if (!IsUserOnThisHousehold(userId, HouseholdId))
                 {

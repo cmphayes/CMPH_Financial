@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CMPH_Financial.Models;
+using CMPH_Financial.Helpers;
+using static CMPH_Financial.InviteEmail;
+using System.IO;
 
 namespace CMPH_Financial.Controllers
 {
@@ -142,13 +145,13 @@ namespace CMPH_Financial.Controllers
             return View();
         }
 
-        //
-        // GET: /Account/Profile
-        [AllowAnonymous]
-        public ActionResult Profile()
-        {
-            return View();
-        }
+        ////
+        //// GET: /Account/Profile
+        //[AllowAnonymous]
+        //public ActionResult Profile()
+        //{
+        //    return View();
+        //}
 
         //
         // POST: /Account/Register
@@ -174,6 +177,52 @@ namespace CMPH_Financial.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/RegisterFromInvite
+        [AllowAnonymous]
+        public ActionResult RegisterFromInvite()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Account/RegisterFromInvite
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> RegisterFromInvite([Bind(Include = "Id,FirstName,LastName,UserName,Email,Password,ConfirmPassword,ProfileImage,HouseholdName")]RegisterViewModel model, HttpPostedFileBase image)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, UserName = model.UserName, Email = model.Email, ProfileImagePath = model.ProfileImage };
+                var result = await UserManager.CreateAsync(user, model.Password);
+
+                if (UserHelper.IsWebFriendlyImage(image))
+                {
+                    var fileName = Path.GetFileName(image.FileName);
+                    image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                    user.ProfileImagePath = "/Uploads/" + fileName;
+                }
+
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return RedirectToAction("ProfileView", "Account");
+                }
+                AddErrors(result);
+
             }
 
             // If we got this far, something failed, redisplay form
@@ -216,13 +265,13 @@ namespace CMPH_Financial.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-
+                //TODO: borrow this code to create my invitation link. Generate my code as a new guid.
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
+                 await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form

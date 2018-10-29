@@ -12,6 +12,7 @@ namespace CMPH_Financial.Models
         public double InitialBalance { get; set; }
         public double ReconciledBalance { get; set; }
         public string Name { get; set; }
+        public bool Deleted { get; set; }
 
         public int HouseholdId { get; set; }
 

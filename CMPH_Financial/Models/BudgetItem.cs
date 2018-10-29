@@ -10,8 +10,10 @@ namespace CMPH_Financial.Models
         public int Id { get; set; }
         public double CurrentBalance { get; set; }
         public string Name { get; set; }
+        public bool Deleted { get; set; }
 
-        public int TransactionId { get; set; }
+
+        //public int TransactionId { get; set; }
         public int CategoryId { get; set; }
         public int BudgetId { get; set; }
 

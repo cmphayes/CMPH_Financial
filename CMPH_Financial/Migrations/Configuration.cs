@@ -51,7 +51,8 @@ namespace CMPH_Financial.Migrations
                     Email = "HeadOfHouseHold@Mailinator.com",
                     FirstName = "Head",
                     LastName = "OfHouseHold",
-                    DisplayName = "Head1"
+                    DisplayName = "HeadOfHousehold1",
+                    HouseholdId = 999 
                 }, "Abcd1234!");
             }
             var HeadOfHouseHoldId = userManager.FindByEmail("HeadOfHouseHold@Mailinator.com").Id;
@@ -65,7 +66,9 @@ namespace CMPH_Financial.Migrations
                     Email = "Member1@Mailinator.com",
                     FirstName = "Member1FirstName",
                     LastName = "Member1LastName",
-                    DisplayName = "Member1"
+                    DisplayName = "Member1",
+                    HouseholdId = 999
+
                 }, "Abcd1234!");
             }
             var Member1Id = userManager.FindByEmail("Member1@Mailinator.com").Id;
@@ -79,7 +82,8 @@ namespace CMPH_Financial.Migrations
                     Email = "Member2@Mailinator.com",
                     FirstName = "Member2FirstName",
                     LastName = "Member2LastName",
-                    DisplayName = "Member2"
+                    DisplayName = "Member2",                    
+                    HouseholdId = 999
                 }, "Abcd1234!");
             }
             var Member2Id = userManager.FindByEmail("Member2@Mailinator.com").Id;
@@ -94,7 +98,8 @@ namespace CMPH_Financial.Migrations
                     Email = "Child1@Mailinator.com",
                     FirstName = "Child1FirstName",
                     LastName = "Child1LastName",
-                    DisplayName = "Child1"
+                    DisplayName = "Child1",
+                    HouseholdId = 999
                 }, "Abcd1234!");
             }
             //assign users to roles
@@ -109,18 +114,41 @@ namespace CMPH_Financial.Migrations
                     Email = "CMPH@Mailinator.com",
                     FirstName = "C",
                     LastName = "H",
-                    DisplayName = "CMPH"
+                    DisplayName = "CMPH",
+                    HouseholdId = 999
                 }, "Abcd1234!");
             }
             //assign users to roles
             var CMPHId = userManager.FindByEmail("CMPH@Mailinator.com").Id;
             userManager.AddToRole(CMPHId, "Admin");
 
+            //First seed a Demo House
+            context.Households.AddOrUpdate(h => h.Name,
+                new Household { Id = 999, Name = "Demo House", Created= DateTimeOffset.Now }
+            );
+
+            context.Budgets.AddOrUpdate(b => b.Name,
+                new Budget { Id = 1000, HouseholdId = 999, Name = "Demo Budget 1", TargetBudget = 500 },
+                new Budget { Id = 2000, HouseholdId = 999, Name = "Demo Budget 2", TargetBudget = 1000 },
+                new Budget { Id = 3000, HouseholdId = 999, Name = "Demo Budget 3", TargetBudget = 1500 }
+            );
+
+            context.Categories.AddOrUpdate(tp => tp.Name,
+                new Category { Id = 1000, Name = "Category1" },
+                new Category { Id = 2000, Name = "Category2" },
+                new Category { Id = 3000, Name = "Category3" }
+
+            );
+
+            //Your BudgetItems need to reference a Budget
             context.BudgetItems.AddOrUpdate(bs => bs.Name,
-            new BudgetItem { Name = "status1" },
-            new BudgetItem { Name = "status2" },
-            new BudgetItem { Name = "status3" },
-            new BudgetItem { Name = "status4" }
+            new BudgetItem { BudgetId = 1000, CategoryId = 1000, Name = "Budget Item 1" },
+            new BudgetItem { BudgetId = 1000, CategoryId = 2000, Name = "Budget Item 2" },
+            new BudgetItem { BudgetId = 2000, CategoryId = 3000, Name = "Budget Item 3" },
+            new BudgetItem { BudgetId = 2000, CategoryId = 1000, Name = "Budget Item 4" },
+            new BudgetItem { BudgetId = 3000, CategoryId = 2000, Name = "Budget Item 5" },
+            new BudgetItem { BudgetId = 3000, CategoryId = 3000, Name = "Budget Item 6" }
+
             );
 
             context.TransactionTypes.AddOrUpdate(tt => tt.Type,
@@ -128,12 +156,7 @@ namespace CMPH_Financial.Migrations
             new TransactionType { Type = "OutGoing" }
             );
 
-            context.Categories.AddOrUpdate(tp => tp.Name,
-            new Category { Name = "priority1" },
-            new Category { Name = "priority2" },
-            new Category { Name = "priority3" },
-            new Category { Name = "priority4" }
-            );
+
         }
     }
 
