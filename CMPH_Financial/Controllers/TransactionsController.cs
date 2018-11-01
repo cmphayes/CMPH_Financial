@@ -39,6 +39,10 @@ namespace CMPH_Financial.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
+            ViewBag.TransactionTypeId = new SelectList(db.TransactionTypes, "Id", "Name");
+            ViewBag.AccountId = new SelectList(db.Accounts, "Id", "Name");
+            ViewBag.BudgetItemId = new SelectList(db.BudgetItems, "Id", "Name");
+
             return View();
         }
 
@@ -90,6 +94,42 @@ namespace CMPH_Financial.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(transaction).State = EntityState.Modified;
+                transaction.ReconcilEnteredById = User.Identity.GetUserId();
+                db.SaveChanges();
+                return RedirectToAction("Details", "Household");
+            }
+            return View(transaction);
+        }
+
+
+        // GET: Transactions/Reconcil/5
+        public ActionResult Reconcil(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Transaction transaction = db.Transactions.Find(id);
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+            return View(transaction);
+        }
+
+        // POST: Transactions/Reconcil/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reconcil([Bind(Include = "Id,Description,Date,Amount,Type,Reconciled,ReconciledAmount,CategoryId,EnteredById,AccountId,ReconcilEnteredById")] Transaction transaction)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(transaction).State = EntityState.Modified;
+                transaction.Reconciled = true;
+                transaction.ReconcilEnteredById = User.Identity.GetUserId();
+                transaction.ReconciledTime = DateTime.Now;
                 db.SaveChanges();
                 return RedirectToAction("Details", "Household");
             }

@@ -145,77 +145,75 @@
                                         <p>
                                             @Html.ActionLink("Add Transaction", "Create New", "Create")
                                         </p>
-                                            <table>
-                                                <thead>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <td>
+                                                        <a>Description</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Date</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Amount</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Type</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>CategoryId</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>EnteredById</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>ReconcilEnteredById</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Reconciled</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>ReconciledAmount</a>
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            @foreach (var transaction in HouseholdsHelper.TransactionsOnAccounts(account.Id))
+                                            {
+
+                                                <tbody>
                                                     <tr>
                                                         <td>
-                                                            <a>Description</a>
+                                                            @transaction.Description
                                                         </td>
                                                         <td>
-                                                            <a>Date</a>
+                                                            @transaction.TransactionTime
                                                         </td>
                                                         <td>
-                                                            <a>Amount</a>
+                                                            @transaction.TransactionAmount
                                                         </td>
                                                         <td>
-                                                            <a>Type</a>
+                                                            @transaction.TransactionType
                                                         </td>
                                                         <td>
-                                                            <a>CategoryId</a>
+                                                            @transaction.EnteredById
                                                         </td>
                                                         <td>
-                                                            <a>EnteredById</a>
+                                                            @transaction.ReconcilEnteredById
                                                         </td>
                                                         <td>
-                                                            <a>ReconcilEnteredById</a>
+                                                            @transaction.Reconciled
                                                         </td>
                                                         <td>
-                                                            <a>Reconciled</a>
+                                                            @transaction.ReconciledAmount
                                                         </td>
                                                         <td>
-                                                            <a>ReconciledAmount</a>
+                                                            @Html.ActionLink("Details ", "Details", "Transactions", new { transaction.Id }, new { @class = "btn btn-theme" })
                                                         </td>
                                                     </tr>
-                                                </thead>
-                                                @foreach (var transaction in HouseholdsHelper.TransactionsOnAccounts(account.Id))
-                                                {
-
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                @transaction.Description
-                                                            </td>
-                                                            <td>
-                                                                @transaction.TransactionTime
-                                                            </td>
-                                                            <td>
-                                                                @transaction.TransactionAmount
-                                                            </td>
-                                                            <td>
-                                                                @transaction.TransactionType
-                                                            </td>
-                                                            <td>
-                                                                @transaction.CategoryId
-                                                            </td>
-                                                            <td>
-                                                                @transaction.EnteredById
-                                                            </td>
-                                                            <td>
-                                                                @transaction.ReconcilEnteredById
-                                                            </td>
-                                                            <td>
-                                                                @transaction.Reconciled
-                                                            </td>
-                                                            <td>
-                                                                @transaction.ReconciledAmount
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                }
-
-                                            </table>
-                                    }
-                                    }
+                                                </tbody>
+                                            }
+                                        </table>
+                                    }                                    
                                 </table>
                             </div>
                         </div>
@@ -258,7 +256,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                 }
+                                }
                             </div>
                         </div>
                     </div>

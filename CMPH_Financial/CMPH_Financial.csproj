@@ -493,6 +493,7 @@
     <Content Include="Views\Home\Lobby.cshtml" />
     <Content Include="Views\Households\JoinHousehold.cshtml" />
     <Content Include="Views\Shared\EditProfile.cshtml" />
+    <Content Include="Views\Transactions\Reconcil.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
