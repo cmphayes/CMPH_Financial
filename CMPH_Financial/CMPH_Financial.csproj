@@ -201,12 +201,16 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\TransactionHistoriesController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="Controllers\TransactionTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BankAccountHelper.cs" />
+    <Compile Include="Helpers\BudgetHelper.cs" />
+    <Compile Include="Helpers\BudgetItemHelper.cs" />
     <Compile Include="Helpers\HouseholdHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Helpers\UserRoleHelper.cs" />
@@ -215,16 +219,18 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Budget.cs" />
     <Compile Include="Models\BudgetItem.cs" />
-    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\Household.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Invitation.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransactionHistory.cs" />
     <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\InvitationViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -264,6 +270,7 @@
     <Content Include="img\backgrounds\water.jpg" />
     <Content Include="img\backgrounds\water_thumb.jpg" />
     <Content Include="img\badge.png" />
+    <Content Include="img\BeeStockPhoto.jpg" />
     <Content Include="img\bg_direction_nav.png" />
     <Content Include="img\blog1.png" />
     <Content Include="img\blog2.png" />
@@ -273,10 +280,13 @@
     <Content Include="img\client1.png" />
     <Content Include="img\client2.png" />
     <Content Include="img\client3.png" />
+    <Content Include="img\Conall Hayes_bw %281%29.jpg" />
+    <Content Include="img\Conall Hayes_bw_small.jpg" />
     <Content Include="img\contact_icos.png" />
     <Content Include="img\description.png" />
     <Content Include="img\design.png" />
     <Content Include="img\develop.png" />
+    <Content Include="img\FaviconImage.png" />
     <Content Include="img\lightbox\close.png" />
     <Content Include="img\lightbox\loading.gif" />
     <Content Include="img\lightbox\next.png" />
@@ -318,6 +328,7 @@
     <Content Include="img\social\Wordpress.png" />
     <Content Include="img\social\YouTube.png" />
     <Content Include="img\sprites\sprite.png" />
+    <Content Include="img\StockCartoonBookPhoto.jpg" />
     <Content Include="Scripts\about.css" />
     <Content Include="Scripts\animate.css" />
     <Content Include="Scripts\backgrounds.css" />
@@ -468,7 +479,7 @@
     <Content Include="Views\TransactionTypes\Edit.cshtml" />
     <Content Include="Views\TransactionTypes\Index.cshtml" />
     <Content Include="Views\Shared\_AccountsPartial.cshtml" />
-    <Content Include="Views\Account\Profile.cshtml" />
+    <Content Include="Views\Account\ProfileView.cshtml" />
     <Content Include="Views\Households\Invite.cshtml" />
     <Content Include="Views\Account\RegisterFromInvite.cshtml" />
     <Content Include="Scripts\portfolio-item.scss" />
@@ -480,6 +491,8 @@
     <Content Include="Scripts\sign-up.scss" />
     <Content Include="Scripts\theme.scss" />
     <Content Include="Views\Home\Lobby.cshtml" />
+    <Content Include="Views\Households\JoinHousehold.cshtml" />
+    <Content Include="Views\Shared\EditProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

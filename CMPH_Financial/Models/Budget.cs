@@ -12,6 +12,8 @@ namespace CMPH_Financial.Models
         public double TargetBudget { get; set; }
         public double CurrentBudget { get; set; }
         public int HouseholdId { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTimeOffset Created { get; set; }
         public bool Deleted { get; set; }
 
 

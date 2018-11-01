@@ -44,28 +44,41 @@
 
             <div class="collapse navbar-collapse navbar-ex1-collapse" role="navigation">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="~/Home/Index.cshtml">Home</a></li>
-                    <li><a href="Home/About.cshtml">About</a></li>
+                    <li class="active">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                    <li>@Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link js-scroll-trigger" })</li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="~/Households/Details.cshtml">Household</a></li>
-                            <li><a href="~/Account/Profile.cshtml">Profile</a></li>
-                            <li><a href="~/Account/Login.cshtml">Sign in</a></li>
-                            <li><a href="~/Account/Register.cshtml">Sign up</a></li>
-                            <li><a href="~/Households/Invite.cshtml">Invite</a></li>
-                        </ul>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account<b class="caret"></b></a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Household", "Households", "Details", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                                <li>@Html.ActionLink("Profile", "Profile", "Account", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                                <li>@Html.ActionLink("Invite", "Invite", "Households", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Login", "Login", "Account", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                                <li>@Html.ActionLink("Register", "Register", "Account", null, new { @class = "nav-link js-scroll-trigger" })</li>
+                            </ul>
+                        }
                     </li>
-                    <li><a href="~/Home/Contact.cshtml">Contact</a></li>
-                    <li><a href="~/Account/Register.cshtml">Sign up</a></li>
-                    <li><a href="~/Account/Login.cshtml">Sign in</a></li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", null)</li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="container body-content">
-        @RenderBody()
-        <hr />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <div>
+            @RenderBody()
+            <hr />
+        </div>
     </div>
     <!-- starts footer -->
     <footer id="footer">

@@ -12,6 +12,11 @@ using CMPH_Financial.Models;
 using CMPH_Financial.Helpers;
 using static CMPH_Financial.InviteEmail;
 using System.IO;
+using System.Net;
+using System.Configuration;
+using System.Net.Mail;
+using System.Web.Configuration;
+
 
 namespace CMPH_Financial.Controllers
 {
@@ -20,6 +25,9 @@ namespace CMPH_Financial.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+
+        private ApplicationDbContext db = new ApplicationDbContext();
+
 
         public AccountController()
         {
@@ -82,7 +90,7 @@ namespace CMPH_Financial.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("ProfileView", "Account");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -137,6 +145,18 @@ namespace CMPH_Financial.Controllers
             }
         }
 
+
+        //
+        // get: /account/profile
+        [AllowAnonymous]
+        public ActionResult ProfileView()
+        {
+            var Id = User.Identity.GetUserId();
+            var user = db.Users.Find(Id);
+            return View(user);
+        }
+
+
         //
         // GET: /Account/Register
         [AllowAnonymous]
@@ -144,14 +164,6 @@ namespace CMPH_Financial.Controllers
         {
             return View();
         }
-
-        ////
-        //// GET: /Account/Profile
-        //[AllowAnonymous]
-        //public ActionResult Profile()
-        //{
-        //    return View();
-        //}
 
         //
         // POST: /Account/Register
@@ -170,11 +182,11 @@ namespace CMPH_Financial.Controllers
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Lobby", "Home");
                 }
                 AddErrors(result);
             }
@@ -186,21 +198,64 @@ namespace CMPH_Financial.Controllers
         //
         // GET: /Account/RegisterFromInvite
         [AllowAnonymous]
-        public ActionResult RegisterFromInvite()
+        public ActionResult RegisterFromInvite(string email, Guid code)
         {
-            return View();
+            var accept = new RegisterFromInviteViewModel
+            {
+                Email = email,
+                Code = code
+            };
+
+            return View(accept);
         }
 
         //
         // POST: /Account/RegisterFromInvite
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterFromInvite([Bind(Include = "Id,FirstName,LastName,UserName,Email,Password,ConfirmPassword,ProfileImage,HouseholdName")]RegisterViewModel model, HttpPostedFileBase image)
+        public async Task<ActionResult> RegisterFromInvite([Bind(Include = "Id,FirstName,LastName,UserName,Email,Password,ConfirmPassword,ProfileImage,HouseholdName")]RegisterFromInviteViewModel model, HttpPostedFileBase image, Guid Code)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, UserName = model.UserName, Email = model.Email, ProfileImagePath = model.ProfileImage };
+                TempData["ErrorMessage"] = "";
+
+                if (string.IsNullOrEmpty(model.Email))
+                {
+                    TempData["ErrorMessage"] = "";
+                }
+                if (model.Code == null)
+                {
+                    TempData["ErrorMessage"] = "";
+
+                }
+                var invitation = db.Invitations.FirstOrDefault(i => i.Code == model.Code);
+                if (invitation == null)
+                {
+                    TempData["ErrorMessage"] = "";
+
+                }
+                else
+                {
+                    if (DateTime.Now > invitation.Expires)
+                    {
+                        TempData["ErrorMessage"] = "";
+                    }
+                    if (model.Code != invitation.Code)
+                    {
+                        TempData["ErrorMessage"] = "";
+                    }
+                }
+
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.UserName,
+                    Email = model.Email,
+                };
+
                 var result = await UserManager.CreateAsync(user, model.Password);
+                UserRoleHelper.AddUserToRole(user.Id, "Member");
 
                 if (UserHelper.IsWebFriendlyImage(image))
                 {
@@ -211,10 +266,7 @@ namespace CMPH_Financial.Controllers
 
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);                    
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
@@ -222,7 +274,6 @@ namespace CMPH_Financial.Controllers
                     return RedirectToAction("ProfileView", "Account");
                 }
                 AddErrors(result);
-
             }
 
             // If we got this far, something failed, redisplay form
@@ -536,6 +587,47 @@ namespace CMPH_Financial.Controllers
                 }
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
+        }
+
+            // GET: Profile/Edit/5
+
+            public ActionResult EditProfile(string userId)
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    userId = User.Identity.GetUserId();
+                }
+                return View(db.Users.Find(userId));
+            }
+
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public ActionResult EditProfile(ApplicationUser user)
+            {
+                user.UserName = user.Email;
+
+                db.Users.Attach(user);
+
+                db.Entry(user).Property(x => x.FirstName).IsModified = true;
+                db.Entry(user).Property(x => x.LastName).IsModified = true;
+                db.Entry(user).Property(x => x.DisplayName).IsModified = true;
+                db.Entry(user).Property(x => x.Email).IsModified = true;
+                db.Entry(user).Property(x => x.UserName).IsModified = true;
+                db.Entry(user).Property(x => x.ProfileImagePath).IsModified = true;
+                db.Entry(user).Property(x => x.Password).IsModified = true;
+                db.Entry(user).Property(x => x.ConfirmPassword).IsModified = true;
+
+
+
+                db.SaveChanges();
+
+                return RedirectToAction("ProfileView", "Account");
+            
+
+
+
+
+
         }
         #endregion
     }

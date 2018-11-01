@@ -27,7 +27,6 @@ namespace CMPH_Financial.Models
         public int AccountId { get; set; }
         public string ReconcilEnteredById { get; set; }
 
-        public virtual Category Category { get; set; }
         public virtual Account Account { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
         public virtual ApplicationUser ReconcilEnteredBy { get; set; }

@@ -14,11 +14,9 @@ namespace CMPH_Financial.Models
 
 
         //public int TransactionId { get; set; }
-        public int CategoryId { get; set; }
         public int BudgetId { get; set; }
 
         //public virtual Transaction Transaction { get; set; }
-        public virtual Category Category { get; set; }
         public virtual Budget Budget { get; set; }
 
     }

@@ -1,104 +1,277 @@
-﻿@model CMPH_Financial.Models.Household
+﻿@using CMPH_Financial.Helpers;
+@model CMPH_Financial.Models.Household
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Household Details";
 }
-<div id="portfolio">
-    <div class="container">
-        <div class="section_header">
-            <h3>Portfolio</h3>
+<h2>ProfileView</h2>
+<hr />
+@Html.ActionLink("Invite", "Invite", "Household", null, new { @class = "nav-link js-scroll-trigger" })
+<div class="row content-panel">
+    <div class="col-md-8">
+        <div>
+            <a>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</a>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="filters_container">
-                    <ul id="filters">
-                        <li><a href="#" data-filter="*" class="active">All</a></li>
-                        <li class="separator">/</li>
-                        <li><a href="#" data-filter=".art">Art</a></li>
-                        <li class="separator">/</li>
-                        <li><a href="#" data-filter=".ilustration">Illustration</a></li>
-                        <li class="separator">/</li>
-                        <li><a href="#" data-filter=".print">Print</a></li>
-                        <li class="separator">/</li>
-                        <li><a href="#" data-filter=".web">Web</a></li>
-                    </ul>
+    </div>
+    <div class="col-md-4">
+        <div>
+            <a>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</a>
+        </div>
+    </div>
+</div>
+<div class="row content-panel">
+    <div class="panel-heading">
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active">
+                <a data-toggle="tab" href="#members">Members <span class="badge bg-primary">@Model.Users.Count</span></a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#accounts">Accounts <span class="badge bg-primary">@Model.Accounts.Count</span></a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#budgets">Budgets <span class="badge bg-primary">@Model.Budgets.Count</span></a>
+            </li>
+            @if (User.IsInRole("Admin, HeadOfHousehold"))
+            {
+                <li>
+                    <a data-toggle="tab" href="#edit">Edit <span class="badge bg-primary"></span></a>
+                </li>
+            }
+        </ul>
+    </div>
+    <!-- /panel-heading -->
+    <div class="panel-body">
+        <div class="tab-content">
+            <div id="members" class="tab-pane active">
+                <div class="row">
+                    <div class="col-md-6 detailed">
+                        <div class="row">
+                            <h4>Members</h4>
+                            <div class="col-md-8 col-md-centered-2 mt">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a>DisplayName</a>
+                                            </td>
+                                            <td>
+                                                <a>Email</a>
+                                            </td>
+                                            <td>
+                                                <a>Role</a>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    @foreach (var member in Model.Users.OrderByDescending(p => p.DisplayName))
+                                    {
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @member.DisplayName
+                                                </td>
+                                                <td>
+                                                    @member.Email
+                                                </td>
+                                                <td>
+                                                    @member.Role
+                                                </td>
+                                                <td>
+                                                    @Html.ActionLink("View Profile ", "ProfileView", "Account", new { member.Id }, new { @class = "btn btn-theme" })
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="gallery_container">
-                    <div class="photo art web">
-                        <img src="img/portfolio1.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Art</small>
-                            <div class="more">+</div>
-                        </a>
+            <div id="accounts" class="tab-pane">
+                <div class="row">
+                    <div class="col-md-6 detailed">
+                        <div class="row">
+                            <h4>Accounts</h4>
+                            <div class="col-md-8 col-md-centered-2 mt">
+                                <table class="table">
+                                    <p>
+                                        @Html.ActionLink("Create New", "Create")
+                                    </p>
+                                    @foreach (var account in Model.Accounts.OrderByDescending(p => p.Created))
+                                    {
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    <a>Name</a>
+                                                </td>
+                                                <td>
+                                                    <a>InitialBalance</a>
+                                                </td>
+                                                <td>
+                                                    <a>CurrentBalance</a>
+                                                </td>
+                                                <td>
+                                                    <a>Created</a>
+                                                </td>
+                                                <td>
+                                                    <a>CreatedBy</a>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @account.Name
+                                                </td>
+                                                <td>
+                                                    @account.InitialBalance
+                                                </td>
+                                                <td>
+                                                    @account.CurrentBalance
+                                                </td>
+                                                <td>
+                                                    @account.Created
+                                                </td>
+                                                <td>
+                                                    @account.CreatedBy
+                                                </td>
+                                                <td>
+                                                    @Html.ActionLink("Details ", "Details", "Accounts", new { account.Id }, new { @class = "btn btn-theme" })
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <p>
+                                            @Html.ActionLink("Add Transaction", "Create New", "Create")
+                                        </p>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <td>
+                                                            <a>Description</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>Date</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>Amount</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>Type</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>CategoryId</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>EnteredById</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>ReconcilEnteredById</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>Reconciled</a>
+                                                        </td>
+                                                        <td>
+                                                            <a>ReconciledAmount</a>
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                @foreach (var transaction in HouseholdsHelper.TransactionsOnAccounts(account.Id))
+                                                {
+
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                @transaction.Description
+                                                            </td>
+                                                            <td>
+                                                                @transaction.TransactionTime
+                                                            </td>
+                                                            <td>
+                                                                @transaction.TransactionAmount
+                                                            </td>
+                                                            <td>
+                                                                @transaction.TransactionType
+                                                            </td>
+                                                            <td>
+                                                                @transaction.CategoryId
+                                                            </td>
+                                                            <td>
+                                                                @transaction.EnteredById
+                                                            </td>
+                                                            <td>
+                                                                @transaction.ReconcilEnteredById
+                                                            </td>
+                                                            <td>
+                                                                @transaction.Reconciled
+                                                            </td>
+                                                            <td>
+                                                                @transaction.ReconciledAmount
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                }
+
+                                            </table>
+                                    }
+                                    }
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="photo ilustration">
-                        <img src="img/portfolio2.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Web Design</small>
-                            <div class="more">+</div>
-                        </a>
+                </div>
+            </div>
+            <div id="budgets" class="tab-pane">
+                <div class="row">
+                    <div class="col-md-6 detailed">
+                        <div class="row">
+                            <h4>Budgets</h4>
+                            <div class="col-md-8 col-md-centered-2 mt">
+                                @foreach (var budget in Model.Budgets.OrderByDescending(p => p.Created))
+                                {
+                                    <div class="col-sm-3 ultra">
+                                        <div class="plan">
+                                            <div class="wrapper">
+                                                <img class="ribbon" src="img/badge.png">
+                                                <h3>
+                                                    @budget.Name
+                                                </h3>
+                                                <div class="price">
+                                                    <span class="budget">@budget.CurrentBudget </span>
+                                                </div>
+                                                <div class="features">
+                                                    <p>
+                                                        @budget.TargetBudget
+                                                    </p>
+                                                    <p>
+                                                        @budget.CurrentBudget
+                                                    </p>
+                                                    <p>
+                                                        @budget.Created
+                                                    </p>
+                                                    <p>
+                                                        @budget.CreatedBy
+                                                    </p>
+                                                </div>
+                                                @Html.ActionLink(" Details ", "Details", "Budgets", new { budget.Id }, new { @class = "btn btn-theme" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                 }
+                            </div>
+                        </div>
                     </div>
-                    <div class="photo print">
-                        <img src="img/portfolio3.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Print</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo art web">
-                        <img src="img/portfolio2.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Web design</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo art ilustration">
-                        <img src="img/portfolio1.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Ilustration</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo print">
-                        <img src="img/portfolio3.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Print</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo web">
-                        <img src="img/portfolio2.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Web Design</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo art ilustration web">
-                        <img src="img/portfolio3.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Art</small>
-                            <div class="more">+</div>
-                        </a>
-                    </div>
-                    <div class="photo print">
-                        <img src="img/portfolio1.png" class="img-responsive" />
-                        <a href="portfolio-item.html" class="mask">
-                            <h3>Awesome portfolio item</h3>
-                            <small>Ilustration</small>
-                            <div class="more">+</div>
-                        </a>
+                </div>
+            </div>
+            <div id="edit" class="tab-pane">
+                <div class="row">
+                    <div class="col-md-6 detailed">
+                        <div class="row">
+                            <div class="col-lg-12 col-lg-centered-2 detailed">
+                                @Html.Partial("EditHouseholdPartial", Model)
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

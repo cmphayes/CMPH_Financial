@@ -52,7 +52,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.TransactionHistories.Add(transactionHistory);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
 
             return View(transactionHistory);
@@ -84,7 +84,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(transactionHistory).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
             return View(transactionHistory);
         }
@@ -112,7 +112,7 @@ namespace CMPH_Financial.Controllers
             TransactionHistory transactionHistory = db.TransactionHistories.Find(id);
             db.TransactionHistories.Remove(transactionHistory);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Household");
         }
 
         protected override void Dispose(bool disposing)

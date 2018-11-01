@@ -18,13 +18,17 @@ namespace CMPH_Financial.Models
         public string DisplayName { get; set; }
         public string ProfileImagePath { get; set; }
 
+        public virtual Household Household { get; set; }
+
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
 
 
 
         public ApplicationUser()
         {
             Transactions = new HashSet<Transaction>();
+            Notifications = new HashSet<Notification>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -62,15 +66,17 @@ namespace CMPH_Financial.Models
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.BudgetItem> BudgetItems { get; set; }
 
-        public System.Data.Entity.DbSet<CMPH_Financial.Models.Category> Categories { get; set; }
-
         public System.Data.Entity.DbSet<CMPH_Financial.Models.TransactionType> TransactionTypes { get; set; }
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.Household> Households { get; set; }
 
         public System.Data.Entity.DbSet<CMPH_Financial.Models.Transaction> Transactions { get; set; }
 
+        public System.Data.Entity.DbSet<CMPH_Financial.Models.Invitation> Invitations { get; set; }
+
         public System.Data.Entity.DbSet<CMPH_Financial.Models.TransactionHistory> TransactionHistories { get; set; }
-        public object HouseHolds { get; internal set; }
+
+        public System.Data.Entity.DbSet<CMPH_Financial.Models.Notification> Notifications { get; set; }
+
     }
 }

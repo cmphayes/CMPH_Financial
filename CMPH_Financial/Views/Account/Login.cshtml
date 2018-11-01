@@ -1,13 +1,17 @@
 ﻿@using CMPH_Financial.Models
 @model LoginViewModel
+@*@{
+    Layout = null;
+
+}*@
 @{
 
     ViewBag.Title = "Log in";
 }
+
+<h2>Login</h2>
+
 <div class="row mt">
-    <div>
-        @Html.ActionLink("User Login", "Index", "Home", null, new { @class = "btn btn-theme" })
-    </div>
     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
         <div class="col-lg-8">

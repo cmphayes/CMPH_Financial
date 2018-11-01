@@ -9,8 +9,22 @@ namespace CMPH_Financial.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Type { get; set; }
         public bool Deleted { get; set; }
 
+
+        public virtual ICollection<Transaction> Transactions { get; set; }
+
+        public TransactionType()
+        {
+            Transactions = new HashSet<Transaction>();
+        }
+
+        public enum Type
+        {
+            Withdrawal,
+            Deposit,
+            AdjustUp,
+            AdjustDown,
+        }
     }
 }

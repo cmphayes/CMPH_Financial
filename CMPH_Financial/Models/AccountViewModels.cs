@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMPH_Financial.Models
@@ -105,6 +106,10 @@ namespace CMPH_Financial.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Invite Code")]
+        public Guid Code { get; set; }
 
         [Required]
         [Display(Name = "First Name")]

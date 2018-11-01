@@ -11,19 +11,27 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.HouseholdId)
+            @Html.DisplayNameFor(model => model.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.HouseholdId)
+            @Html.DisplayFor(model => model.Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Balance)
+            @Html.DisplayNameFor(model => model.InitialBalance)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Balance)
+            @Html.DisplayFor(model => model.InitialBalance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentBalance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentBalance)
         </dd>
 
         <dt>
@@ -33,18 +41,92 @@
         <dd>
             @Html.DisplayFor(model => model.ReconciledBalance)
         </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
     </dl>
+    <hr/>
+       <h3>Transactions</h3>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    <a>EnteredById</a>
+                </td>
+                <td>
+                    <a>TransactionTime</a>
+                </td>
+                <td>
+                    <a>TransactionType</a>
+                </td>
+                <td>
+                    <a>TransactionAmount</a>
+                </td>
+                <td>
+                    <a>Description</a>
+                </td>
+                <td>
+                    <a>Category</a>
+                </td>
+                <td>
+                    <a>Reconciled</a>
+                </td>
+                <td>
+                    <a>ReconciledAmount</a>
+                </td>
+                <td>
+                    <a>ReconcilEnteredBy</a>
+                </td>
+                <td>
+                    <a>ReconciledTime</a>
+                </td>
+                <td></td>
+            </tr>
+        </thead>
+        @foreach (var transaction in Model.Transactions.OrderByDescending(p => p.TransactionTime))
+        {
+        <tbody>
+            <tr>
+                <td>
+                    @transaction.EnteredById
+                </td>
+                <td>
+                    @transaction.TransactionTime
+                </td>
+                <td>
+                    @transaction.TransactionType
+                </td>
+                <td>
+                    @transaction.TransactionAmount
+                </td>
+                <td>
+                    @transaction.Description
+                </td>
+                <td>
+                    @transaction.Category
+                </td>
+                <td>
+                    @transaction.Reconciled
+                </td>
+                <td>
+                    @transaction.ReconciledAmount
+                </td>
+                <td>
+                    @transaction.ReconcilEnteredBy
+                </td>
+                <td>
+                    @transaction.ReconciledTime
+                </td>
+                <td>
+                    @Html.ActionLink("Details ", "Details", "Budgets", new { transaction.Id }, new { @class = "btn btn-theme" })
+                    @Html.ActionLink("Edit ", "Edit", "Budgets", new { transaction.Id }, new { @class = "btn btn-theme" })
+                    @Html.ActionLink("Delete ", "Delete", "Budgets", new { transaction.Id }, new { @class = "btn btn-theme" })
+
+                </td>
+            </tr>
+        </tbody>
+        }
+    </table>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edit ", "Edit", new { id = Model.Id }, new { @class = "btn btn-theme" })
+    @Html.ActionLink("Delete ", "Delete", new { id = Model.Id }, new { @class = "btn btn-theme" })
+    @Html.ActionLink("Back to Household", "Details", "Households", new { id = Model.Id }, new { @class = "btn btn-theme" })
 </p>

@@ -52,7 +52,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Accounts.Add(account);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
 
             return View(account);
@@ -84,7 +84,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(account).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
             return View(account);
         }
@@ -112,7 +112,7 @@ namespace CMPH_Financial.Controllers
             Account account = db.Accounts.Find(id);
             db.Accounts.Remove(account);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Household");
         }
 
         protected override void Dispose(bool disposing)

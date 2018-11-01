@@ -11,7 +11,9 @@ using System.Web;
 using System.Web.Mvc;
 using CMPH_Financial.Helpers;
 using CMPH_Financial.Models;
+using CMPH_Financial.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace CMPH_Financial.Controllers
 {
@@ -28,52 +30,77 @@ namespace CMPH_Financial.Controllers
         }
 
         // GET: Invite
-        public ActionResult Invite()
+        public ActionResult Invite(string id)
         {
-            return View(db.Households.ToList());
+            var newInvite = new InvitationViewModel
+            {
+                HouseholdId = id
+            };
+
+            return View(newInvite);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Invite(InviteEmailModel model)
+        public async Task<ActionResult>  InviteAsync(InvitationViewModel invitation)
         {
-            if (ModelState.IsValid)
+            var newInvitation = new Invitation
             {
-                try
+                Email = invitation.ToEmail,
+                HouseholdId = invitation.HouseholdId,
+                Expires = DateTime.Now.AddDays(3),
+                Created = DateTimeOffset.Now,
+                Code = Guid.NewGuid(),
+            };
+
+            var householdId = db.Users.Find(User).HouseholdId;
+
+            db.Invitations.Add(newInvitation);
+            db.SaveChanges();
+            try
+            {
+                var from = ConfigurationManager.AppSettings["emailfrom"];
+
+                var callbackUrl = Url.Action("RegisterFromInvite", "Account", new { email = newInvitation.Email, code = newInvitation.Code }, protocol: Request.Url.Scheme);
+
+                var email = new MailMessage(from, newInvitation.Email)
                 {
-                    var to = model.ToEmail;
-                    var from = "Financial<cmphayes@gmail.com>";
-                    var email = new MailMessage(from, to)
-                    {
-                        Subject = model.Subject,
-                        Body = $"<p> Email From: <bold>{model.FromName}</bold> ({model.FromEmail})</p><p> Subject:</p><p>{model.Subject}</p><p> Message:</p><p>{model.Body}</p><p>{model.Body}</p>",
-                        IsBodyHtml = true
-                    };
+                    Subject = "You have been invited to join a household.",
+                    Body = $"<p> Email From: <bold>{invitation.FromName}</bold></p> <p>Subject:{invitation.Subject}</p> <p>Message:You have been invited to join a household.{invitation.Code}</p>< a href =\"" + callbackUrl + "\">here</a>",
+                    IsBodyHtml = true
+                };
 
+                var svc = new InviteEmail();
+                await svc.SendAsync(email);
 
-                    var svc = new InviteEmail();
-                    await svc.SendAsync(email);
+                db.Invitations.Add(newInvitation);
+                db.SaveChanges();
+            }
 
-                    return View(new EmailModel());
-                }
-                catch (Exception ex)
-                {
+            catch (Exception ex)
+            {
                     Console.WriteLine(ex.Message);
                     await Task.FromResult(0);
-                }
             }
-            return View(model);
+
+            return RedirectToAction("Details", new { id = invitation.HouseholdId });
         }
 
         // GET: Households/Details/5
         [Authorize]
-        public ActionResult Details()
+        public ActionResult Details(int? id)
         {
-            var userId = User.Identity.GetUserId();
-            if (db.Users.Find(userId).HouseholdId == null)
-                return RedirectToAction("Index", "Home");
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
-            return View(UserHelper.GetUserHousehold(userId));
+            Household household = db.Households.Find(id);
+            if (household == null)
+            {
+                return RedirectToAction("ProfileView", "Account");
+            }
+            return View(household);
         }
 
         // GET: Households/Create
@@ -85,7 +112,7 @@ namespace CMPH_Financial.Controllers
         // POST: Households/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Password,ConfirmPassword")] Household household)
+        public ActionResult Create([Bind(Include = "Name")] Household household)
         {
             if (ModelState.IsValid)
             {
@@ -96,11 +123,11 @@ namespace CMPH_Financial.Controllers
                 UserRoleHelper.AddUserToRole(headOfHouseHold, "HeadOfHouseHold");
                 household.HouseholdCreatorId = headOfHouseHold;
                 household.Created = DateTimeOffset.Now;
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
 
             return View(household);
-        }
+        }        
 
         // GET: Households/Edit/5
         [Authorize(Roles = "Admin,HeadOfHousehold")]
@@ -127,7 +154,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(household).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
             return View(household);
         }
@@ -155,8 +182,8 @@ namespace CMPH_Financial.Controllers
             Household household = db.Households.Find(id);
             db.Households.Remove(household);
             db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+            return RedirectToAction("Lobby");
+        }     
 
         protected override void Dispose(bool disposing)
         {

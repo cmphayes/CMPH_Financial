@@ -52,7 +52,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.BudgetItems.Add(budgetItem);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
 
             return View(budgetItem);
@@ -84,7 +84,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(budgetItem).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
             return View(budgetItem);
         }
@@ -112,7 +112,7 @@ namespace CMPH_Financial.Controllers
             BudgetItem budgetItem = db.BudgetItems.Find(id);
             db.BudgetItems.Remove(budgetItem);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Household");
         }
 
         protected override void Dispose(bool disposing)

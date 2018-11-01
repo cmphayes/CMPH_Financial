@@ -52,7 +52,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.TransactionTypes.Add(transactionType);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
 
             return View(transactionType);
@@ -84,7 +84,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(transactionType).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Household");
             }
             return View(transactionType);
         }
@@ -112,7 +112,7 @@ namespace CMPH_Financial.Controllers
             TransactionType transactionType = db.TransactionTypes.Find(id);
             db.TransactionTypes.Remove(transactionType);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Household");
         }
 
         protected override void Dispose(bool disposing)

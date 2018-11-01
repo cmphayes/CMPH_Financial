@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "Register";
 }
+
+<h2>Register</h2>
+
+
 <div class="row mt">
     @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { enctype = "Multipart/form-data" }))
     {

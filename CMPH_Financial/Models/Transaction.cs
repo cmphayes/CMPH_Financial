@@ -8,6 +8,7 @@ namespace CMPH_Financial.Models
     public class Transaction
     {
         public int Id { get; set; }
+
         public string Description { get; set; }
         public DateTimeOffset TransactionTime { get; set; }
         public double TransactionAmount { get; set; }
@@ -19,18 +20,13 @@ namespace CMPH_Financial.Models
         public string NewValue { get; set; }
         public bool Deleted { get; set; }
 
-
-        public int CategoryId { get; set; }
         public int AccountId { get; set; }
         public int TransactionTypeId { get; set; }
-
         public string ReconcilEnteredById { get; set; }
         public string EnteredById { get; set; }
-
-
+        public string BudgetItemId { get; set; }
 
         public virtual TransactionType TransactionType { get; set; }
-        public virtual Category Category { get; set; }
         public virtual Account Account { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
         public virtual ApplicationUser ReconcilEnteredBy { get; set; }

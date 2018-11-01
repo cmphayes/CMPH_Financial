@@ -47,19 +47,24 @@ namespace CMPH_Financial.Helpers
 
             public static Household GetUserHousehold(string userId)
             {
+                //var user = db.Users.Find(userId);
+                int? householdId = db.Users.Find(userId).HouseholdId;
+                Household household = db.Households.Find(householdId);
 
-                var householdId = db.Users.Find(userId).HouseholdId;
-
-                return db.Households.Find(householdId);
+                return db.Households.Find(household.Name);
             }
 
-        //public static string GetUserHouseholdId(string userId)
-        //{
-        //    var householdId = db.Households.Find(userId).Id;
-        //    return householdId;
-        //}
+            public static int GetHouseholdId()
+            {
+                var userId = HttpContext.Current.User.Identity.GetUserId();
+                if (userId == null)
+                    return -1;
 
-        public static bool IsWebFriendlyImage(HttpPostedFileBase file)
+                var houseId = db.Users.Find(userId).HouseholdId;
+                return houseId ?? -1;
+            }
+
+            public static bool IsWebFriendlyImage(HttpPostedFileBase file)
             {
                     if (file == null)
                         return false;

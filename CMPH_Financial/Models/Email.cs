@@ -31,7 +31,7 @@ namespace CMPH_Financial.Models
         [Required, Display(Name = "Email"), EmailAddress]
         public string FromEmail { get; set; }
 
-        [EmailAddress]
+        [Required, Display(Name = "Email"), EmailAddress]
         public string ToEmail { get; set; }
 
         [Required]

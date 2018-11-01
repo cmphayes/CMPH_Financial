@@ -6,19 +6,13 @@
     @using (Html.BeginForm("RegisterFromInvite", "Account", FormMethod.Post, new { enctype = "Multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
+        @Html.HiddenFor(c => c.Code)
+        @Html.HiddenFor(e => e.Email)
         <div class="col-lg-8">
             <h4><i class="fa fa-angle-right"></i>Register</h4>
             <div class="form">
                 <form class="cmxform form-horizontal style-form" id="signupForm" method="get" action="">
 
-                    @Html.ValidationSummary("", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Email, new { @class = "control-label col-lg-2" })
-                        <div class="col-lg-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
                     @Html.ValidationSummary("", new { @class = "text-danger" })
                     <div class="form-group">
                         @Html.LabelFor(m => m.ProfileImage, new { @class = "control-label col-lg-2" })
@@ -66,7 +60,7 @@
                     <hr />
                     <div class="form-group">
                         <div class="col-lg-offset-2 col-lg-10">
-                            <button class="btn btn-round btn-success" value="Register" type="submit">Save</button>
+                            <input type="submit" class="btn btn-round btn-success" value="Register"/>
                             <button class="btn btn-round btn-success" type="button">Cancel</button>
                         </div>
                     </div>

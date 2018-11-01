@@ -24,15 +24,15 @@ namespace CMPH_Financial.Helpers
                 return (flag);
             }
 
-        public static bool IsUserOnAHousehold(string userId)
-        {
+            public static bool IsUserOnAHousehold(string userId)
+            {
             if (string.IsNullOrEmpty(userId))
                 return false;
             var houseId = db.Users.Find(userId).HouseholdId;
             return (houseId != null);
-        }
+            }
 
-        public static void AddUserToHousehold(string userId, int HouseholdId)
+            public static void AddUserToHousehold(string userId, int HouseholdId)
             {
                 if (!IsUserOnThisHousehold(userId, HouseholdId))
                 {
@@ -123,15 +123,6 @@ namespace CMPH_Financial.Helpers
                 return db.Households.Where(p => p.HouseholdCreatorId == userId).ToList();
             }
 
-            //partials
-
-            //public ICollection<Household> ListUserHouseholdsPartial(string userId)
-            //{
-            //    ApplicationUser user = db.Users.Find(userId);
-            //    var Households = user.HouseholdId;
-            //    return (HouseholdId);
-            //}
-
             public ICollection<Household> ListUserCreatedHouseholdsPartial(string userId)
             {
                 return db.Households.Where(p => p.HouseholdCreatorId == userId).ToList();
@@ -141,24 +132,6 @@ namespace CMPH_Financial.Helpers
             {
                 return db.Households.Find(HouseholdId).Users;
             }
-
-            //public ICollection<ApplicationUser> ListUsersNotOnHousehold(int HouseholdId)
-            //{
-            //    return db.Users.Where(u => u.Households.All(p => p.Id != HouseholdId)).ToList();
-            //}
-
-            //public ICollection<Household> ListUsersOnHousehold(string userId)
-            //{
-            //    ApplicationUser user = db.Users.Find(userId);
-            //    var Households = user.Households.ToList();
-            //    return (Households);
-            //}
-
-
-            //public static List<User> UserOnHousehold(int id)
-            //{
-            //    return db.Users.Where(t => t.HouseholdId == id).ToList();
-            //}
 
             public static string GetHouseholdOwner(int HouseholdId)
             {
@@ -175,6 +148,11 @@ namespace CMPH_Financial.Helpers
                 }
                 return HouseholdOwner;
             }
+
+        public static List<Transaction> TransactionsOnAccounts(int id)
+        {
+            return db.Transactions.Where(c => c.AccountId == id).OrderByDescending(p => p.TransactionTime).ToList();
         }
+    }
     
 }
