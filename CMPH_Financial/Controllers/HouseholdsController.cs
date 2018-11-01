@@ -88,14 +88,15 @@ namespace CMPH_Financial.Controllers
 
         // GET: Households/Details/5
         [Authorize]
-        public ActionResult Details(int? id)
+        public ActionResult Details(int userid)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
 
-            Household household = db.Households.Find(id);
+            Household household = db.Households.Find(userid);
+
             if (household == null)
             {
                 return RedirectToAction("ProfileView", "Account");

@@ -23,7 +23,6 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <p>@UserHelper.GetUserHousehold(Model.Id)</p>
                 </div>
                 <div class="col-md-4">
                     <p>@UserHelper.GetName(Model.Id)</p>
@@ -49,10 +48,9 @@
                             <div id="household" class="tab-pane active">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        @Html.ActionLink("Go To Household", "Details", "Households", new {Model.HouseholdId}, new { @class = "nav-link js-scroll-trigger" })
+                                        @Html.ActionLink("Go To Household", "Details", "Households", new {Model.Id}, new { @class = "btn btn-theme" })
                                     </div>
                                     <div class="col-md-6">
-                                        @Html.ActionLink("Go To Household", "Details", "Households", new {Model.HouseholdId}, new { @class = "nav-link js-scroll-trigger" })
                                     </div>
                                 </div>
                             </div>

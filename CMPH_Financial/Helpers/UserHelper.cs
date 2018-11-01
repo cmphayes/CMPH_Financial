@@ -51,7 +51,7 @@ namespace CMPH_Financial.Helpers
                 int? householdId = db.Users.Find(userId).HouseholdId;
                 Household household = db.Households.Find(householdId);
 
-                return db.Households.Find(household.Name);
+                return household;
             }
 
             public static int GetHouseholdId()

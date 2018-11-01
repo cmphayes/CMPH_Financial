@@ -6,7 +6,14 @@
 }
 <h2>ProfileView</h2>
 <hr />
-@Html.ActionLink("Invite", "Invite", "Household", null, new { @class = "nav-link js-scroll-trigger" })
+@Html.ActionLink("Invite", "Invite", "Households", null, new { @class = "btn btn-theme" })
+@Html.ActionLink("Create New Budget", "Create", "Budgets", null, new { @class = "btn btn-theme" })
+@Html.ActionLink("Create New Account", "Create", "Accounts", null, new { @class = "btn btn-theme" })
+@Html.ActionLink("Create New Budget Item", "Create", "BudgetItems", null, new { @class = "btn btn-theme" })
+@Html.ActionLink("Create New Transaction", "Create", "Transaction", null, new { @class = "btn btn-theme" })
+@Html.ActionLink("Create New Transaction Type", "Create", "TransactionTypes", null, new { @class = "btn btn-theme" })
+
+
 <div class="row content-panel">
     <div class="col-md-8">
         <div>
@@ -213,7 +220,7 @@
                                                 </tbody>
                                             }
                                         </table>
-                                    }                                    
+                                    }
                                 </table>
                             </div>
                         </div>

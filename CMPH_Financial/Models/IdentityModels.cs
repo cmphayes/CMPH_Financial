@@ -36,12 +36,12 @@ namespace CMPH_Financial.Models
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
 
-            userIdentity.AddClaim(new Claim("FirstName", this.FirstName));
-            userIdentity.AddClaim(new Claim("LastName", this.LastName));
-            userIdentity.AddClaim(new Claim("DisplayName", this.DisplayName));
-            userIdentity.AddClaim(new Claim("UserName", this.UserName));
-            userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath ?? ""));
-            userIdentity.AddClaim(new Claim("FullName", $"{this.FirstName}{this.LastName}"));
+            //userIdentity.AddClaim(new Claim("FirstName", this.FirstName));
+            //userIdentity.AddClaim(new Claim("LastName", this.LastName));
+            //userIdentity.AddClaim(new Claim("DisplayName", this.DisplayName));
+            //userIdentity.AddClaim(new Claim("UserName", this.UserName));
+            //userIdentity.AddClaim(new Claim("ProfileImagePath", this.ProfileImagePath ?? ""));
+            //userIdentity.AddClaim(new Claim("FullName", $"{this.FirstName}{this.LastName}"));
 
             // Add custom user claims here      
             return userIdentity;
