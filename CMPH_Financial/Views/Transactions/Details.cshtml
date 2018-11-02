@@ -85,6 +85,8 @@
     </dl>
 </div>
 <p>
+    @Html.ActionLink("Void", "Void", new { id = Model.Id }) |
+    @Html.ActionLink("Reconcil", "Reconcil", new { id = Model.Id }) |
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

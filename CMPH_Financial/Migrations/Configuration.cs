@@ -34,14 +34,33 @@ namespace CMPH_Financial.Migrations
                 roleManager.Create(new IdentityRole { Name = "Member" });
             }
 
-            //First seed a Demo House
-            context.Households.AddOrUpdate(h => h.Name,
-                new Household { Id = 999, Name = "Demo House", Created = DateTimeOffset.Now }
-            );
-
             //create users
             var userManager = new UserManager<ApplicationUser>(
                 new UserStore<ApplicationUser>(context));
+
+
+            if (!context.Users.Any(u => u.Email == "CMPH@Mailinator.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "CMPH@Mailinator.com",
+                    Email = "CMPH@Mailinator.com",
+                    FirstName = "C",
+                    LastName = "H",
+                    DisplayName = "CMPH",
+                    ProfileImagePath = "/img/StockCartoonBookPhoto.jpg",
+                }, "Abcd1234!");
+            }
+
+            var CMPHId = userManager.FindByEmail("CMPH@Mailinator.com").Id;
+            userManager.AddToRole(CMPHId, "Admin");
+
+
+            //First seed a Demo House
+            context.Households.AddOrUpdate(h => h.Name,
+                new Household { Id = 999, Name = "Demo House", Created = DateTimeOffset.Now, HouseholdCreatorId = CMPHId }
+            );
+
 
 
             //*****************************************//
@@ -94,19 +113,7 @@ namespace CMPH_Financial.Migrations
                 }, "Abcd1234!");
             }
 
-            if (!context.Users.Any(u => u.Email == "CMPH@Mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser
-                {
-                    UserName = "CMPH@Mailinator.com",
-                    Email = "CMPH@Mailinator.com",
-                    FirstName = "C",
-                    LastName = "H",
-                    DisplayName = "CMPH",
-                    ProfileImagePath = "/img/StockCartoonBookPhoto.jpg",
-                    HouseholdId = 1,
-                }, "Abcd1234!");
-            }
+
 
             //assign users to roles            
             var HeadOfHouseHoldId = userManager.FindByEmail("HeadOfHouseHold@Mailinator.com").Id;
@@ -118,8 +125,6 @@ namespace CMPH_Financial.Migrations
             var Member2Id = userManager.FindByEmail("Member2@Mailinator.com").Id;
             userManager.AddToRole(Member2Id, "Member");
 
-            var CMPHId = userManager.FindByEmail("CMPH@Mailinator.com").Id;
-            userManager.AddToRole(CMPHId, "Admin");
 
             context.Budgets.AddOrUpdate(b => b.Name,
                 new Budget { Id = 1000, HouseholdId = 1, Name = "Demo Budget 1", TargetBudget = 500, Created = DateTimeOffset.Now },

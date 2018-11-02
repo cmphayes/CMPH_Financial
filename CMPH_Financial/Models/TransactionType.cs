@@ -10,6 +10,8 @@ namespace CMPH_Financial.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public bool Deleted { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public string CreatedBy { get; set; }
 
 
         public virtual ICollection<Transaction> Transactions { get; set; }

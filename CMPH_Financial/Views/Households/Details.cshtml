@@ -6,23 +6,24 @@
 }
 <h2>ProfileView</h2>
 <hr />
-@Html.ActionLink("Invite", "Invite", "Households", null, new { @class = "btn btn-theme" })
-@Html.ActionLink("Create New Budget", "Create", "Budgets", null, new { @class = "btn btn-theme" })
-@Html.ActionLink("Create New Account", "Create", "Accounts", null, new { @class = "btn btn-theme" })
-@Html.ActionLink("Create New Budget Item", "Create", "BudgetItems", null, new { @class = "btn btn-theme" })
-@Html.ActionLink("Create New Transaction", "Create", "Transaction", null, new { @class = "btn btn-theme" })
-@Html.ActionLink("Create New Transaction Type", "Create", "TransactionTypes", null, new { @class = "btn btn-theme" })
-
 
 <div class="row content-panel">
-    <div class="col-md-8">
+    <div class="col-md-4">
         <div>
-            <a>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</a>
+            <p>
+                Owner of the Household
+                <p>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</p>
+            </p>
         </div>
     </div>
     <div class="col-md-4">
         <div>
-            <a>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</a>
+            @Html.ActionLink("Leave Household", "LeaveHousehold", "Account", null, new { @class = "btn btn-theme" })
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div>
+            @Html.ActionLink("Invite", "Invite", "Households", null, new { @class = "btn btn-theme" })
         </div>
     </div>
 </div>
@@ -38,12 +39,10 @@
             <li>
                 <a data-toggle="tab" href="#budgets">Budgets <span class="badge bg-primary">@Model.Budgets.Count</span></a>
             </li>
-            @if (User.IsInRole("Admin, HeadOfHousehold"))
-            {
-                <li>
-                    <a data-toggle="tab" href="#edit">Edit <span class="badge bg-primary"></span></a>
-                </li>
-            }
+            <li>
+                <a data-toggle="tab" href="#manage">Manage Household <span class="badge bg-primary"></span></a>
+            </li>
+
         </ul>
     </div>
     <!-- /panel-heading -->
@@ -59,13 +58,13 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <a>DisplayName</a>
+                                                <p>DisplayName</p>
                                             </td>
                                             <td>
-                                                <a>Email</a>
+                                                <p>Email</p>
                                             </td>
                                             <td>
-                                                <a>Role</a>
+                                                <p>Role</p>
                                             </td>
                                             <td></td>
                                         </tr>
@@ -102,27 +101,24 @@
                             <h4>Accounts</h4>
                             <div class="col-md-8 col-md-centered-2 mt">
                                 <table class="table">
-                                    <p>
-                                        @Html.ActionLink("Create New", "Create")
-                                    </p>
-                                    @foreach (var account in Model.Accounts.OrderByDescending(p => p.Created))
+                                    @foreach (var account in Model.Accounts.Where(d => d.Deleted = false))
                                     {
                                         <thead>
                                             <tr>
                                                 <td>
-                                                    <a>Name</a>
+                                                    <p>Name</p>
                                                 </td>
                                                 <td>
-                                                    <a>InitialBalance</a>
+                                                    <p>InitialBalance</p>
                                                 </td>
                                                 <td>
-                                                    <a>CurrentBalance</a>
+                                                    <p>CurrentBalance</p>
                                                 </td>
                                                 <td>
-                                                    <a>Created</a>
+                                                    <p>Created</p>
                                                 </td>
                                                 <td>
-                                                    <a>CreatedBy</a>
+                                                    <p>CreatedBy</p>
                                                 </td>
                                                 <td></td>
                                             </tr>
@@ -149,42 +145,39 @@
                                                 </td>
                                             </tr>
                                         </tbody>
-                                        <p>
-                                            @Html.ActionLink("Add Transaction", "Create New", "Create")
-                                        </p>
                                         <table>
                                             <thead>
                                                 <tr>
                                                     <td>
-                                                        <a>Description</a>
+                                                        <p>Description</p>
                                                     </td>
                                                     <td>
-                                                        <a>Date</a>
+                                                        <p>Date</p>
                                                     </td>
                                                     <td>
-                                                        <a>Amount</a>
+                                                        <p>Amount</p>
                                                     </td>
                                                     <td>
-                                                        <a>Type</a>
+                                                        <p>Type</p>
                                                     </td>
                                                     <td>
-                                                        <a>CategoryId</a>
+                                                        <p>CategoryId</p>
                                                     </td>
                                                     <td>
-                                                        <a>EnteredById</a>
+                                                        <p>EnteredById</p>
                                                     </td>
                                                     <td>
-                                                        <a>ReconcilEnteredById</a>
+                                                        <p>ReconcilEnteredById</p>
                                                     </td>
                                                     <td>
-                                                        <a>Reconciled</a>
+                                                        <p>Reconciled</p>
                                                     </td>
                                                     <td>
-                                                        <a>ReconciledAmount</a>
+                                                        <p>ReconciledAmount</p>
                                                     </td>
                                                 </tr>
                                             </thead>
-                                            @foreach (var transaction in HouseholdsHelper.TransactionsOnAccounts(account.Id))
+                                            @foreach (var transaction in HouseholdsHelper.TransactionsOnAccounts(account.Id).Where(t => t.Deleted = false))
                                             {
 
                                                 <tbody>
@@ -223,6 +216,8 @@
                                     }
                                 </table>
                             </div>
+                            @Html.ActionLink("Add Transaction", "Create New", "Create")
+                            @Html.ActionLink("Create New Account", "Create", "Accounts", null, new { @class = "btn btn-theme" })
                         </div>
                     </div>
                 </div>
@@ -264,17 +259,24 @@
                                         </div>
                                     </div>
                                 }
+                                @Html.ActionLink("Create New Budget", "Create", "Budgets", null, new { @class = "btn btn-theme" })
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="edit" class="tab-pane">
+            <div id="manage" class="tab-pane">
                 <div class="row">
                     <div class="col-md-6 detailed">
                         <div class="row">
                             <div class="col-lg-12 col-lg-centered-2 detailed">
-                                @Html.Partial("EditHouseholdPartial", Model)
+                                @Html.ActionLink("Invite", "Invite", "Households", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Create New Budget", "Create", "Budgets", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Create New Account", "Create", "Accounts", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Create New Budget Item", "Create", "BudgetItems", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Create New Transaction", "Create", "Transaction", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Create New Transaction Type", "Create", "TransactionTypes", null, new { @class = "btn btn-theme" })
+                                @Html.ActionLink("Leave Household", "LeaveHousehold", "Account", null, new { @class = "btn btn-theme" })
                             </div>
                         </div>
                     </div>

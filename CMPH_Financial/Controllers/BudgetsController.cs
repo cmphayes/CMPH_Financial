@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CMPH_Financial.Models;
+using Microsoft.AspNet.Identity;
 
 namespace CMPH_Financial.Controllers
 {
@@ -50,9 +51,11 @@ namespace CMPH_Financial.Controllers
         {
             if (ModelState.IsValid)
             {
+                budget.CreatedBy = User.Identity.GetUserId();
+                budget.Created = DateTimeOffset.Now;
                 db.Budgets.Add(budget);
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
 
             return View(budget);
@@ -84,7 +87,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(budget).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
             return View(budget);
         }
@@ -110,9 +113,9 @@ namespace CMPH_Financial.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Budget budget = db.Budgets.Find(id);
-            db.Budgets.Remove(budget);
+            budget.Deleted = true;
             db.SaveChanges();
-            return RedirectToAction("Details", "Household");
+            return RedirectToAction("Details", "Households");
         }
 
         protected override void Dispose(bool disposing)

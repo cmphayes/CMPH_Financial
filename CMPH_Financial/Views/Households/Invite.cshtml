@@ -1,4 +1,4 @@
-﻿@model CMPH_Financial.Models.InviteEmailModel
+﻿@model CMPH_Financial.ViewModels.InvitationViewModel
 @using CMPH_Financial.Helpers
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
@@ -11,7 +11,8 @@
 
 @using (Html.BeginForm())
 {
-    @:@Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(h => h.HouseholdId)
     <h4>Invite Someone To Your Household.</h4>
     <hr />
 

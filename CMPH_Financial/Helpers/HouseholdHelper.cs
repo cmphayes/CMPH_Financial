@@ -26,10 +26,13 @@ namespace CMPH_Financial.Helpers
 
             public static bool IsUserOnAHousehold(string userId)
             {
-            if (string.IsNullOrEmpty(userId))
-                return false;
-            var houseId = db.Users.Find(userId).HouseholdId;
-            return (houseId != null);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return false;
+                }
+
+                var houseId = db.Users.Find(userId).HouseholdId;
+                return (houseId != null);
             }
 
             public static void AddUserToHousehold(string userId, int HouseholdId)
@@ -69,17 +72,12 @@ namespace CMPH_Financial.Helpers
             }
 
             [ValidateAntiForgeryToken]
-            public static void RemoveUserFromHousehold(string userId, int HouseholdId)
+            public static void RemoveUserFromHousehold(string userId)
             {
-                if (IsUserOnThisHousehold(userId, HouseholdId))
-                {
-                    Household hhold = db.Households.Find(HouseholdId);
-                    var delUser = db.Users.Find(userId);
-
-                    hhold.Users.Remove(delUser);
-                    db.Entry(hhold).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
+                var user = db.Users.Find(userId);
+                user.HouseholdId = null;
+                db.SaveChanges();
+                
             }
 
             [ValidateAntiForgeryToken]

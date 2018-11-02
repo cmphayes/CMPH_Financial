@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using CMPH_Financial.Models;
 using Microsoft.AspNet.Identity;
+using CMPH_Financial.Helpers;
+
 
 namespace CMPH_Financial.Controllers
 {
@@ -63,11 +65,56 @@ namespace CMPH_Financial.Controllers
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
 
             return View(transaction);
         }
+
+        // GET: Transactions/Void
+        public ActionResult Void(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Transaction transaction = db.Transactions.Find(id);
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+            return View(transaction);
+        }
+
+        //Post: Transaction/Void
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Void([Bind(Include = "Id,Amount,TransactionType,ReconciledAmount,AccountId")] Transaction transaction)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (transaction.ReconciledAmount > 0)
+        //        {
+        //            BudgetHelper.VoidAdjustBalance(transaction.Id);
+        //            BankAccountHelper.VoidAdjustBalance(transaction.Id);
+        //        }
+        //        else 
+        //        {
+        //            BudgetHelper.VoidAdjustBalance(transaction.Id);
+        //            BankAccountHelper.VoidAdjustBalance(transaction.Id);
+
+        //        }
+
+
+
+        //        db.Entry(transaction).State = EntityState.Modified;
+        //        transaction.Void = true;
+        //        transaction.VoidedById = User.Identity.GetUserId();
+        //        transaction.VoidTime = DateTime.Now;
+        //        db.SaveChanges();
+        //        return RedirectToAction("Details", "Household");
+        //    }       
+
 
         // GET: Transactions/Edit/5
         public ActionResult Edit(int? id)
@@ -96,7 +143,7 @@ namespace CMPH_Financial.Controllers
                 db.Entry(transaction).State = EntityState.Modified;
                 transaction.ReconcilEnteredById = User.Identity.GetUserId();
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
             return View(transaction);
         }
@@ -131,7 +178,7 @@ namespace CMPH_Financial.Controllers
                 transaction.ReconcilEnteredById = User.Identity.GetUserId();
                 transaction.ReconciledTime = DateTime.Now;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
             return View(transaction);
         }
@@ -157,9 +204,9 @@ namespace CMPH_Financial.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Transaction transaction = db.Transactions.Find(id);
-            db.Transactions.Remove(transaction);
+            transaction.Deleted = true;
             db.SaveChanges();
-            return RedirectToAction("Details", "Household");
+            return RedirectToAction("Details", "Households");
         }
 
         protected override void Dispose(bool disposing)

@@ -63,6 +63,28 @@ namespace CMPH_Financial.Controllers
             }
         }
 
+        //Get: /Account/LeaveHousehold
+        [Authorize]
+        public ActionResult LeaveHousehold()
+        {
+            var userId = User.Identity.GetUserId();
+            if (User.IsInRole("HeadOfHouseHold"))
+            {
+                //Some error message
+                return View("User can not leave Household if User is in Role HeadOfHousehold");
+
+            }
+            else
+            {
+                UserRoleHelper.RemoveUserFromRole(userId, "Member");
+
+                HouseholdsHelper.RemoveUserFromHousehold(userId);
+                return RedirectToAction("ProfileView", "Account");
+            }
+
+        }
+
+
         //
         // GET: /Account/Login
         [AllowAnonymous]

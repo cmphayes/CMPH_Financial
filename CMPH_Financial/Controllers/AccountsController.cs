@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CMPH_Financial.Models;
+using Microsoft.AspNet.Identity;
 
 namespace CMPH_Financial.Controllers
 {
@@ -46,16 +47,18 @@ namespace CMPH_Financial.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,HouseholdId,Balance,ReconciledBalance,Name")] Account account)
+        public ActionResult Create([Bind(Include = "Id,HouseholdId,InitialBalance,Name")] Account account)
         {
             if (ModelState.IsValid)
             {
+                account.CreatedBy = User.Identity.GetUserId();
+                account.Created = DateTimeOffset.Now;
                 db.Accounts.Add(account);
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
 
-            return View(account);
+            return RedirectToAction("Details", "Households");
         }
 
         // GET: Accounts/Edit/5
@@ -84,9 +87,9 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(account).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
-            return View(account);
+            return RedirectToAction("Details", "Households");
         }
 
         // GET: Accounts/Delete/5
@@ -101,7 +104,7 @@ namespace CMPH_Financial.Controllers
             {
                 return HttpNotFound();
             }
-            return View(account);
+            return RedirectToAction("Details", "Households");
         }
 
         // POST: Accounts/Delete/5
@@ -110,9 +113,9 @@ namespace CMPH_Financial.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Account account = db.Accounts.Find(id);
-            db.Accounts.Remove(account);
+            account.Deleted = true;
             db.SaveChanges();
-            return RedirectToAction("Details", "Household");
+            return RedirectToAction("Details", "Households");
         }
 
         protected override void Dispose(bool disposing)

@@ -12,6 +12,7 @@ namespace CMPH_Financial.Models
         public int HouseholdId { get; set; }
         public string RecipientId { get; set; }
         public bool Read { get; set; }
+        public bool Deleted { get; set; }
 
         public virtual Household Household { get; set; }
         public virtual ApplicationUser Recipient { get; set; }

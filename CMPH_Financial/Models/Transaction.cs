@@ -19,10 +19,15 @@ namespace CMPH_Financial.Models
         public string OldValue { get; set; }
         public string NewValue { get; set; }
         public bool Deleted { get; set; }
+        public bool Void { get; set; }
+        public DateTimeOffset VoidTime { get; set; }
+
+
 
         public int AccountId { get; set; }
         public int TransactionTypeId { get; set; }
         public string ReconcilEnteredById { get; set; }
+        public string VoidedById { get; set; }
         public string EnteredById { get; set; }
         public string BudgetItemId { get; set; }
 

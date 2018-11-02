@@ -52,7 +52,7 @@ namespace CMPH_Financial.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Notification notification = db.Notifications.Find(id);
-            db.Notifications.Remove(notification);
+            notification.Deleted = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -35,5 +35,24 @@ namespace CMPH_Financial.Helpers
 
 
         }
+
+        public static void VoidAdjustBalance(int transactionId)
+        {
+            var transaction = db.Transactions.Find(transactionId);
+            var transactionType = transaction.TransactionType;
+            var budgetItem = db.Accounts.Find(transaction.BudgetItemId);
+            var bankId = transaction.AccountId;
+            var bankAccount = db.Accounts.Find(bankId);
+
+            db.Accounts.Attach(bankAccount);
+
+            if (transactionType.Name == "AdjustmentUp")
+                budgetItem.CurrentBalance += transaction.ReconciledAmount;
+
+            else if (transactionType.Name == "AdjustmentDown")
+                budgetItem.CurrentBalance -= transaction.ReconciledAmount;
+
+
+        }
     }
 }

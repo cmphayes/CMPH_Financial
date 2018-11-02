@@ -42,7 +42,7 @@ namespace CMPH_Financial.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult>  InviteAsync(InvitationViewModel invitation)
+        public async Task<ActionResult>  Invite(InvitationViewModel invitation)
         {
             var newInvitation = new Invitation
             {
@@ -53,7 +53,7 @@ namespace CMPH_Financial.Controllers
                 Code = Guid.NewGuid(),
             };
 
-            var householdId = db.Users.Find(User).HouseholdId;
+            //var householdId = db.Users.Find(User).HouseholdId;
 
             db.Invitations.Add(newInvitation);
             db.SaveChanges();
@@ -70,11 +70,13 @@ namespace CMPH_Financial.Controllers
                     IsBodyHtml = true
                 };
 
-                var svc = new InviteEmail();
+                var svc = new PersonalEmail();
                 await svc.SendAsync(email);
 
                 db.Invitations.Add(newInvitation);
                 db.SaveChanges();
+                return RedirectToAction("Details", "Households");
+
             }
 
             catch (Exception ex)
@@ -83,23 +85,19 @@ namespace CMPH_Financial.Controllers
                     await Task.FromResult(0);
             }
 
-            return RedirectToAction("Details", new { id = invitation.HouseholdId });
+            return RedirectToAction("Details", "Households");
         }
+
+      
 
         // GET: Households/Details/5
         [Authorize]
-        public ActionResult Details(int userid)
+        public ActionResult Details(int id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-
-            Household household = db.Households.Find(userid);
-
+            Household household = db.Households.Find(id);
             if (household == null)
             {
-                return RedirectToAction("ProfileView", "Account");
+                return HttpNotFound();
             }
             return View(household);
         }
@@ -124,7 +122,7 @@ namespace CMPH_Financial.Controllers
                 UserRoleHelper.AddUserToRole(headOfHouseHold, "HeadOfHouseHold");
                 household.HouseholdCreatorId = headOfHouseHold;
                 household.Created = DateTimeOffset.Now;
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
 
             return View(household);
@@ -155,7 +153,7 @@ namespace CMPH_Financial.Controllers
             {
                 db.Entry(household).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Household");
+                return RedirectToAction("Details", "Households");
             }
             return View(household);
         }
@@ -181,7 +179,7 @@ namespace CMPH_Financial.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Household household = db.Households.Find(id);
-            db.Households.Remove(household);
+            household.Deleted = true;
             db.SaveChanges();
             return RedirectToAction("Lobby");
         }     
