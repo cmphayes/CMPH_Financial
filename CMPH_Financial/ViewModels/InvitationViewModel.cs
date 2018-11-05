@@ -10,7 +10,7 @@ namespace CMPH_Financial.ViewModels
     {
             public int Id { get; set; }
 
-            public string HouseholdId { get; set; }
+            public int HouseholdId { get; set; }
 
             public bool Accepted { get; set; }
 

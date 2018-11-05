@@ -24,6 +24,7 @@ namespace CMPH_Financial.Helpers
                 return (flag);
             }
 
+
             public static bool IsUserOnAHousehold(string userId)
             {
                 if (string.IsNullOrEmpty(userId))

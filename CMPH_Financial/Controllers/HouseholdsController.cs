@@ -29,12 +29,46 @@ namespace CMPH_Financial.Controllers
             return View(db.Households.ToList());
         }
 
-        // GET: Invite
-        public ActionResult Invite(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AlertUser()
         {
+            string userId = User.Identity.GetUserId();
+            var alertEmail = db.Users.Find(userId).Email;
+
+            try
+            {
+                var from = ConfigurationManager.AppSettings["emailfrom"];
+
+                var email = new MailMessage(from, alertEmail)
+                {
+                    Subject = "An Account Is At Or Below $0.00",
+                    Body = $"<p>One of your accounts is at or below $0.00 </p>",
+                    IsBodyHtml = true
+                };
+
+                var svc = new PersonalEmail();
+                await svc.SendAsync(email);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await Task.FromResult(0);
+            }
+
+            return RedirectToAction("Details", "Households");
+        }
+
+        // GET: Invite
+        public ActionResult Invite()
+        {
+            var userId = User.Identity.GetUserId();
+            var householdId = db.Users.Find(userId).HouseholdId;
+
             var newInvite = new InvitationViewModel
             {
-                HouseholdId = id
+                HouseholdId = (int)householdId
             };
 
             return View(newInvite);
@@ -52,8 +86,6 @@ namespace CMPH_Financial.Controllers
                 Created = DateTimeOffset.Now,
                 Code = Guid.NewGuid(),
             };
-
-            //var householdId = db.Users.Find(User).HouseholdId;
 
             db.Invitations.Add(newInvitation);
             db.SaveChanges();

@@ -58,15 +58,15 @@ namespace CMPH_Financial.Migrations
 
             //First seed a Demo House
             context.Households.AddOrUpdate(h => h.Name,
-                new Household { Id = 999, Name = "Demo House", Created = DateTimeOffset.Now, HouseholdCreatorId = CMPHId }
+                new Household { Id = 999, Name = "House 1", Created = DateTimeOffset.Now, HouseholdCreatorId = CMPHId }
             );
 
 
 
-            //*****************************************//
-            if (!System.Diagnostics.Debugger.IsAttached)
-                System.Diagnostics.Debugger.Launch();
-            //*****************************************//
+            ////*****************************************//
+            //if (!System.Diagnostics.Debugger.IsAttached)
+            //    System.Diagnostics.Debugger.Launch();
+            ////*****************************************//
 
 
 
@@ -127,9 +127,7 @@ namespace CMPH_Financial.Migrations
 
 
             context.Budgets.AddOrUpdate(b => b.Name,
-                new Budget { Id = 1000, HouseholdId = 1, Name = "Demo Budget 1", TargetBudget = 500, Created = DateTimeOffset.Now },
-                new Budget { Id = 2000, HouseholdId = 1, Name = "Demo Budget 2", TargetBudget = 1000, Created = DateTimeOffset.Now },
-                new Budget { Id = 3000, HouseholdId = 1, Name = "Demo Budget 3", TargetBudget = 1500, Created = DateTimeOffset.Now }
+                new Budget { Id = 1000, HouseholdId = 1, Name = "Budget", TargetBudget = 500, Created = DateTimeOffset.Now }
             );
 
             //Your BudgetItems need to reference a Budget

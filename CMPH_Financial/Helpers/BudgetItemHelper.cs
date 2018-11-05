@@ -11,7 +11,7 @@ namespace CMPH_Financial.Helpers
 
         private static ApplicationDbContext db = new ApplicationDbContext();
 
-        public static void AdjustBalance(int transactionId)
+        public static void AdjustBalance(double transactionId)
         {
             var transaction = db.Transactions.Find(transactionId);
             var transactionType = transaction.TransactionType;
@@ -32,6 +32,32 @@ namespace CMPH_Financial.Helpers
 
             else if (transactionType.Name == "AdjustmentDown")
                 budgetItem.CurrentBalance -= transaction.TransactionAmount;
+
+
+        }
+
+
+        public static void VoidAdjustBalance(double amount)
+        {
+            var transaction = db.Transactions.Find(amount);
+            var transactionType = transaction.TransactionType;
+            var budgetItem = db.Accounts.Find(transaction.BudgetItemId);
+            var bankId = transaction.AccountId;
+            var bankAccount = db.Accounts.Find(bankId);
+
+            db.Accounts.Attach(bankAccount);
+
+            if (transactionType.Name == "Deposit")
+                budgetItem.CurrentBalance -= amount;
+
+            else if (transactionType.Name == "Withdrawl")
+                budgetItem.CurrentBalance += amount;
+
+            else if (transactionType.Name == "AdjustmentUp")
+                budgetItem.CurrentBalance -= amount;
+
+            else if (transactionType.Name == "AdjustmentDown")
+                budgetItem.CurrentBalance += amount;
 
 
         }

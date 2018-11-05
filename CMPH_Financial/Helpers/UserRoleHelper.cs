@@ -23,7 +23,7 @@ namespace CMPH_Financial.Helpers
             var result = UserManager.AddToRole(userId, roleName);
             return;
         }
-
+        
         public static void RemoveUserFromRole(string userId, string roleName)
         {
             var result = UserManager.RemoveFromRole(userId, roleName);

@@ -10,10 +10,10 @@
 <div class="row content-panel">
     <div class="col-md-4">
         <div>
-            <p>
+            <a>
                 Owner of the Household
                 <p>@HouseholdsHelper.GetHouseholdOwner(Model.Id)</p>
-            </p>
+            </a>
         </div>
     </div>
     <div class="col-md-4">
@@ -216,7 +216,7 @@
                                     }
                                 </table>
                             </div>
-                            @Html.ActionLink("Add Transaction", "Create New", "Create")
+                            @Html.ActionLink("Add Transaction", "Create", "Transactions")
                             @Html.ActionLink("Create New Account", "Create", "Accounts", null, new { @class = "btn btn-theme" })
                         </div>
                     </div>

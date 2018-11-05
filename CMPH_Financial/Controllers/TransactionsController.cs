@@ -62,8 +62,14 @@ namespace CMPH_Financial.Controllers
                 var bankAccount = db.Accounts.Find(transaction.AccountId).HouseholdId;
                 transaction.TransactionTime = DateTime.Now;
                 transaction.EnteredById = User.Identity.GetUserId();
+                string userId = transaction.ReconcilEnteredById;
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
+
+                if(bankAccount < 0)
+                {
+                    return RedirectToAction("AlertUser", "Households");
+                }
 
                 return RedirectToAction("Details", "Households");
             }
@@ -87,33 +93,33 @@ namespace CMPH_Financial.Controllers
         }
 
         //Post: Transaction/Void
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Void([Bind(Include = "Id,Amount,TransactionType,ReconciledAmount,AccountId")] Transaction transaction)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (transaction.ReconciledAmount > 0)
-        //        {
-        //            BudgetHelper.VoidAdjustBalance(transaction.Id);
-        //            BankAccountHelper.VoidAdjustBalance(transaction.Id);
-        //        }
-        //        else 
-        //        {
-        //            BudgetHelper.VoidAdjustBalance(transaction.Id);
-        //            BankAccountHelper.VoidAdjustBalance(transaction.Id);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Void( Transaction transaction)
+        {
+            if (ModelState.IsValid)
+            {
+                if (transaction.ReconciledAmount > 0)
+                {
+                    BudgetHelper.VoidAdjustBalance(transaction.ReconciledAmount);
+                    BankAccountHelper.VoidAdjustBalance(transaction.ReconciledAmount);
+                }
+                else
+                {
+                    BudgetHelper.VoidAdjustBalance(transaction.TransactionAmount);
+                    BankAccountHelper.VoidAdjustBalance(transaction.TransactionAmount);
 
-        //        }
+                }
+                db.Entry(transaction).State = EntityState.Modified;
+                transaction.Void = true;
+                transaction.VoidedById = User.Identity.GetUserId();
+                transaction.VoidTime = DateTime.Now;
+                db.SaveChanges();
+                return RedirectToAction("Details", "Household");
+            }
+            return RedirectToAction("Details", "Household");
 
-
-
-        //        db.Entry(transaction).State = EntityState.Modified;
-        //        transaction.Void = true;
-        //        transaction.VoidedById = User.Identity.GetUserId();
-        //        transaction.VoidTime = DateTime.Now;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Details", "Household");
-        //    }       
+        }
 
 
         // GET: Transactions/Edit/5

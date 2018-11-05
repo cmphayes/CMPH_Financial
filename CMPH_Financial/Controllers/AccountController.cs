@@ -16,7 +16,7 @@ using System.Net;
 using System.Configuration;
 using System.Net.Mail;
 using System.Web.Configuration;
-
+using System.Text;
 
 namespace CMPH_Financial.Controllers
 {
@@ -70,15 +70,36 @@ namespace CMPH_Financial.Controllers
             var userId = User.Identity.GetUserId();
             if (User.IsInRole("HeadOfHouseHold"))
             {
-                //Some error message
-                return View("User can not leave Household if User is in Role HeadOfHousehold");
+                var householdId = db.Users.Find(userId).HouseholdId;
+
+                UserRoleHelper.RemoveUserFromRole(userId, "HeadOfHousehold");
+                HouseholdsHelper.RemoveUserFromHousehold(userId);
+
+                var members = db.Users.Where(u => u.HouseholdId == householdId).ToList();
+
+                var roleHelper = new UserRoleHelper();
+                foreach (var member in members)
+                {
+                    if(roleHelper.IsUserInRole(member.Id, "Member"))
+                    {
+                        UserRoleHelper.RemoveUserFromRole(member.Id, "Member");
+                        UserRoleHelper.AddUserToRole(member.Id, "HeadOfHousehold");
+                        break;
+                    }
+                }
+
+                return RedirectToAction("ProfileView", "Account");
 
             }
             else
             {
                 UserRoleHelper.RemoveUserFromRole(userId, "Member");
-
                 HouseholdsHelper.RemoveUserFromHousehold(userId);
+                Household household = db.Households.Find(userId);
+                if (household.Users.Count == 0)
+                {
+                    household.Deleted = true;
+                }
                 return RedirectToAction("ProfileView", "Account");
             }
 
@@ -235,66 +256,81 @@ namespace CMPH_Financial.Controllers
         // POST: /Account/RegisterFromInvite
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterFromInvite([Bind(Include = "Id,FirstName,LastName,UserName,Email,Password,ConfirmPassword,ProfileImage,HouseholdName")]RegisterFromInviteViewModel model, HttpPostedFileBase image, Guid Code)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterFromInvite(RegisterFromInviteViewModel model, HttpPostedFileBase image, Guid Code)
         {
             if (ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "";
+                var errorMsg = new StringBuilder();
 
-                if (string.IsNullOrEmpty(model.Email))
-                {
-                    TempData["ErrorMessage"] = "";
-                }
-                if (model.Code == null)
-                {
-                    TempData["ErrorMessage"] = "";
+                var invite = db.Invitations.FirstOrDefault(i => i.Code == model.Code);
 
-                }
-                var invitation = db.Invitations.FirstOrDefault(i => i.Code == model.Code);
-                if (invitation == null)
-                {
-                    TempData["ErrorMessage"] = "";
+                    if (invite == null)
+                    {
+                    errorMsg.Append("You have not been invited.");
 
+                    }
+                    else
+                    {
+                        if (DateTime.Now > invite.Expires)
+                        {
+                            errorMsg.Append("Invitation Expired.");
+                        }
+                        if (model.Code != invite.Code)
+                        {
+                            errorMsg.Append("InvalidCode.");
+                        }
+                        if (invite.Accepted)
+                        {
+                            errorMsg.Append("Invitation already accepted");
+                        }
+                    }
+
+                var result = new IdentityResult();
+
+                if (errorMsg.ToString() == string.Empty)
+                {
+
+                    var user = new ApplicationUser
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        UserName = model.Email,
+                        Email = model.Email,
+                        HouseholdId = invite.HouseholdId
+                    };
+
+                    if (UserHelper.IsWebFriendlyImage(image))
+                    {
+                        var fileName = Path.GetFileName(image.FileName);
+                        image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                        user.ProfileImagePath = "/Uploads/" + fileName;
+                    }
+
+                    result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        db.Invitations.Attach(invite);
+                        invite.Accepted = true;
+                        invite.AcceptedTime = DateTime.Now;
+                        invite.IsValid = false;
+                        db.SaveChanges();
+
+                        UserRoleHelper.AddUserToRole(user.Id, "Member");
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return RedirectToAction("ProfileView", "Account");
+                    }
                 }
                 else
                 {
-                    if (DateTime.Now > invitation.Expires)
-                    {
-                        TempData["ErrorMessage"] = "";
-                    }
-                    if (model.Code != invitation.Code)
-                    {
-                        TempData["ErrorMessage"] = "";
-                    }
+                    TempData["ErrorMsg"] = errorMsg.ToString();
+                    return RedirectToAction("Details", "Households", new { id = invite.HouseholdId });
                 }
 
-                var user = new ApplicationUser
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    UserName = model.UserName,
-                    Email = model.Email,
-                };
-
-                var result = await UserManager.CreateAsync(user, model.Password);
-                UserRoleHelper.AddUserToRole(user.Id, "Member");
-
-                if (UserHelper.IsWebFriendlyImage(image))
-                {
-                    var fileName = Path.GetFileName(image.FileName);
-                    image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
-                    user.ProfileImagePath = "/Uploads/" + fileName;
-                }
-
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);                    
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("ProfileView", "Account");
-                }
                 AddErrors(result);
             }
 

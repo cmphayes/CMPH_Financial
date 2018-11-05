@@ -10,11 +10,15 @@ namespace CMPH_Financial.Models
     {
         public int Id { get; set; }
 
-        public string HouseholdId { get; set; }
+        public int HouseholdId { get; set; }
 
         public bool Accepted { get; set; }
 
+        public DateTime AcceptedTime { get; set; }
+
         public Guid Code { get; set; }
+
+        public bool IsValid { get; set; }
 
         public DateTimeOffset Created { get; set; }
 
